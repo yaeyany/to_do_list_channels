@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::ops::AddAssign;
 
-use crate::input::{title_validate, user_input};
+use crate::input::title_validate;
 use crate::errors::TDLErrors;
 use crate::task::TaskState::ToDo;
 
@@ -47,11 +47,10 @@ impl TaskCollection {
         TaskCollection {tasks: BTreeMap::new(), counter: TaskId(0)}
     }
 
-    pub fn add(&mut self) -> Result<TaskId, TDLErrors>{
-        let valid_title: TaskTitle = user_input()?.try_into()?;
+    pub fn add(&mut self, title: TaskTitle) -> Result<TaskId, TDLErrors>{
         let id = self.counter;
         let task = Task {
-            title: valid_title,
+            title: title,
             id: id,
             state: ToDo,
         };

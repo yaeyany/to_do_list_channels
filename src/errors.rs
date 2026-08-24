@@ -1,5 +1,3 @@
-use core::error;
-
 use thiserror::{self, Error};
 
 #[derive(Error, Debug)]
@@ -10,4 +8,8 @@ pub enum TDLErrors {
     InputError,
     #[error("Unknown command.")]
     CommandError,
+}
+
+pub fn handle_error(e: TDLErrors) {
+    println!("{e}");
 }
