@@ -1,6 +1,6 @@
 use std::sync::mpsc::Sender;
 
-use crate::{errors::TDLErrors::{self, CommandError}, input::{check_id, check_state, title_validate, user_input}, task::{self, TaskId, TaskState}};
+use crate::{errors::TDLErrors::{self, CommandError}, input::{check_id, check_state, input_confirmation, title_validate, user_input}, task::{self, TaskId, TaskState}};
 
 pub enum TDLCommands {
     AddTask{
@@ -20,6 +20,13 @@ pub enum TDLCommands {
         task_title: String,
         response_sender: Sender<CommandResult>
     },
+    RemoveTask{
+        id: TaskId,
+        response_sender: Sender<CommandResult>
+    },
+    CommandNone{
+        response_sender: Sender<CommandResult>
+    },
     Quit
 }
 
@@ -32,6 +39,8 @@ pub enum CommandResult {
     InvalidIdOrState,
     TaskTitleEdited,
     InvalidId,
+    TaskRemoved,
+    NoCommand
 }
 
 pub fn match_command(command: &str, response_sender: Sender<CommandResult>) -> Result<TDLCommands, TDLErrors>{
@@ -69,6 +78,35 @@ pub fn match_command(command: &str, response_sender: Sender<CommandResult>) -> R
                 id, 
                 task_title, 
                 response_sender 
+            })
+        },
+        "delete" => {
+            println!("Please enter ID:");
+            let id = check_id(user_input()?)?;
+            println!("Please confirm deletion");
+            if input_confirmation(user_input()?)? {
+                Ok(TDLCommands::RemoveTask { 
+                    id, 
+                    response_sender 
+                })
+            } else {
+                Ok(TDLCommands::CommandNone{
+                    response_sender
+                })
+            }
+        },
+        "help" => {
+            println!(
+                "add - add a new task\n\
+                list - show all tasks\n\
+                toggle - mark a task as done/undone\n\
+                edit - edit a task title\n\
+                delete - delete a task\n\
+                quit - exit the program\n\
+                help - show this help"
+            );
+            Ok(TDLCommands::CommandNone{
+                response_sender
             })
         },
         "quit" => {

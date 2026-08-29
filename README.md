@@ -1,7 +1,7 @@
 # To-Do List (using channels)
 
-Learning how to use channels
+Raw to-do list made using the channels. Was part of the learning process.
 
 ## Plan
 
-To finish 
+No plans for now, done.

@@ -1,6 +1,6 @@
 use std::io;
 
-use crate::{errors::TDLErrors::{self, InputError, InvalidTaskId, InvalidTaskState, TitleError}, task::{TaskId, TaskState::{self, Done, InProgress, ToDo}}};
+use crate::{errors::TDLErrors::{self, InputError, InvalidUserInput, InvalidTaskId, InvalidTaskState, TitleError}, task::{TaskId, TaskState::{self, Done, InProgress, ToDo}}};
 
 //User input
 pub fn user_input() -> Result<String, TDLErrors>{
@@ -33,5 +33,13 @@ pub fn check_state(state: String) -> Result<TaskState, TDLErrors> {
         "inprogress" | "in progress" => Ok(InProgress),
         "done" => Ok(Done),
         _ => Err(InvalidTaskState)
+    }
+}
+
+pub fn input_confirmation(value: String) -> Result<bool, TDLErrors> {
+    match value.to_lowercase().as_str() {
+        "yes" | "y" | "" => Ok(true),
+        "no" | "n" => Ok(false),
+        _ => Err(InvalidUserInput)
     }
 }

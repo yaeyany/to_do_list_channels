@@ -122,4 +122,11 @@ impl TaskCollection {
         }
     }
 
+    pub fn remove_task(&mut self, id: TaskId) -> Result<(), TDLErrors>{
+        if self.tasks.remove(&id).is_none() {
+            Err(InvalidTaskIdLookup)
+        } else {
+            Ok(())
+        }
+    }
 }

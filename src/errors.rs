@@ -14,6 +14,8 @@ pub enum TDLErrors {
     InvalidTaskId,
     #[error("Invalid state")]
     InvalidTaskState,
+    #[error("Invalid input")]
+    InvalidUserInput,
 }
 
 pub fn handle_error(e: TDLErrors) {
