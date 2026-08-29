@@ -1,6 +1,6 @@
 use std::{process::exit, sync::mpsc::{Receiver, Sender, channel}, thread::{self}};
 
-use crate::{commands::{CommandResult::{self, EmptyTasksList, InvalidIdOrState, InvalidTitle, TaskAdded, TaskTitleEdited, TaskToggled, TasksList}, TDLCommands::{self, AddTask, EditTitle, ListTasks, Quit, ToggleTask}, match_command}, errors::{TDLErrors, handle_error}, input::user_input, task::TaskCollection};
+use crate::{commands::{CommandResult::{self, EmptyTasksList, InvalidId, InvalidIdOrState, InvalidTitle, TaskAdded, TaskTitleEdited, TaskToggled, TasksList}, TDLCommands::{self, AddTask, EditTitle, ListTasks, Quit, ToggleTask}, match_command}, errors::{TDLErrors, handle_error}, input::user_input, task::TaskCollection};
 
 mod task;
 mod errors;
@@ -35,8 +35,8 @@ fn main() {
         server(tasks, receiver);
     });
 
-    user.join();
-    server.join();  
+    let _ = user.join();
+    let _ = server.join();  
 }
 
 pub fn server(mut tasks: TaskCollection, receiver: Receiver<TDLCommands>) {
@@ -84,8 +84,12 @@ pub fn server(mut tasks: TaskCollection, receiver: Receiver<TDLCommands>) {
             }) => {
                 match task_title.try_into() {
                     Ok(task_title) => {
-                        let _ = tasks.edit_title(id, task_title);
-                        let _ = response_sender.send(CommandResult::TaskTitleEdited);
+                        if tasks.edit_title(id, task_title).is_err() {
+                            let _ = response_sender.send(CommandResult::InvalidId);
+                        } else {
+                            let _ = response_sender.send(CommandResult::TaskTitleEdited);
+                        };
+                        
                     },
                     Err(_) => {
                         let _ = response_sender.send(CommandResult::InvalidTitle);
@@ -118,6 +122,7 @@ pub fn command_result(command_result: CommandResult) {
         TaskToggled => println!("Task successfully toggled"),
         InvalidIdOrState => println!("Please enter a valid ID and state"),
         TaskTitleEdited => println!("Task title edited"),
+        InvalidId => println!("Task ID must be >=0 and within the list"),
     }
 }
 

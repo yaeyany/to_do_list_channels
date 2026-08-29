@@ -1,6 +1,6 @@
 use std::sync::mpsc::Sender;
 
-use crate::{errors::TDLErrors::{self, CommandError}, input::{check_id, check_state, title_validate, user_input}, task::{self, Task, TaskId, TaskState}};
+use crate::{errors::TDLErrors::{self, CommandError}, input::{check_id, check_state, title_validate, user_input}, task::{self, TaskId, TaskState}};
 
 pub enum TDLCommands {
     AddTask{
@@ -31,6 +31,7 @@ pub enum CommandResult {
     TaskToggled,
     InvalidIdOrState,
     TaskTitleEdited,
+    InvalidId,
 }
 
 pub fn match_command(command: &str, response_sender: Sender<CommandResult>) -> Result<TDLCommands, TDLErrors>{

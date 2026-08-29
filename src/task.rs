@@ -3,13 +3,12 @@ use std::fmt::Display;
 use std::ops::{Add, AddAssign};
 
 use crate::input::title_validate;
-use crate::errors::TDLErrors::{self, InvalidTaskId, InvalidTaskIdLookup};
+use crate::errors::TDLErrors::{self, InvalidTaskIdLookup};
 use crate::task::TaskState::ToDo;
 
 //Custom task structs
 pub struct Task {
     title: TaskTitle,
-    id: TaskId,
     state: TaskState,
 }
 
@@ -94,7 +93,6 @@ impl TaskCollection {
         let id = self.counter;
         let task = Task {
             title: title,
-            id: id,
             state: ToDo,
         };
         self.tasks.insert(self.counter, task);
