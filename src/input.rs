@@ -1,6 +1,6 @@
 use std::io;
 
-use crate::errors::TDLErrors::{self, InputError, TitleError};
+use crate::{errors::TDLErrors::{self, InputError, InvalidTaskId, InvalidTaskState, TitleError}, task::{TaskId, TaskState::{self, Done, InProgress, ToDo}}};
 
 //User input
 pub fn user_input() -> Result<String, TDLErrors>{
@@ -17,5 +17,21 @@ pub fn title_validate(title: String) -> Result<String, TDLErrors> {
         Err(TitleError)
     } else {
         Ok(title)
+    }
+}
+
+pub fn check_id(id: String) -> Result<TaskId, TDLErrors> {
+    match id.parse::<u32>() {
+        Ok(id) => Ok(id.try_into()?),
+        Err(_) => Err(InvalidTaskId),
+    }
+}
+
+pub fn check_state(state: String) -> Result<TaskState, TDLErrors> {
+    match state.to_lowercase().as_str() {
+        "todo" | "to do" => Ok(ToDo),
+        "inprogress" | "in progress" => Ok(InProgress),
+        "done" => Ok(Done),
+        _ => Err(InvalidTaskState)
     }
 }
